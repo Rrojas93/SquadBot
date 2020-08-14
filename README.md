@@ -20,11 +20,9 @@ as well as fun interactions between the bot and the users.
         * Note: the "@your_friend" argument is a game specific argument that is required by the game "Tic Tac Toe"
 
 ### Gallery
-.help Command:
+
 ![.help Command](/images/gallery/command_help.png)
 
-.roll Command:
 ![.roll Command](/images/gallery/command_roll.png)
 
-.game Command:
 ![.game Command](/images/gallery/command_game_ttt.png)
