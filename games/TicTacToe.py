@@ -59,7 +59,7 @@ class TicTacToe(BotGameInterface):
     def instructions(self):
         exampleBoard = list()
         self._fillBoard(board=exampleBoard, fill=True)
-        msg = f'It\'s Tic Tac Toe... You know how this goes.\nUse the number pad on your keyboard as a guide to the Tic Tac Toe board. \nCommands for game: ".game " + any number from 1-9 (example: ".game 1")\nI know your gonna F it up so here a picture:\n\n{self.printBoard(board=exampleBoard)}'
+        msg = f'It\'s Tic Tac Toe... You know how this goes.\nUse the number pad on your keyboard as a guide to the Tic Tac Toe board. \nCommands for game: ".game " + any number from 1-9 (example: ".game 1")\nI know your gonna mess it up so here a picture:\n\n{self.printBoard(board=exampleBoard)}'
         return msg
 
     def clearBoard(self):
