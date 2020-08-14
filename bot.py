@@ -3,13 +3,17 @@
 
 import discord
 from discord.ext import commands
-import time
-import random
-import re
+import time, random, re
 import logging as log
+import secrets
+from games import AvailableGames
+
+mySecrets = secrets.Secrets()
 
 log.basicConfig(filename='squadBot.log', level=log.DEBUG, filemode='a')
 log.info('=== Beginning new log session ===')
+
+currentGame = None
 
 client = commands.Bot(command_prefix='.')
 
@@ -18,7 +22,6 @@ client = commands.Bot(command_prefix='.')
 async def on_ready():
     log.info('Bot is ready: ' + time.asctime(time.localtime(time.time())))
     print('Bot is ready.')
-
 
 # Commands
 @client.command()
@@ -162,12 +165,66 @@ async def howtoroll(ctx):
     msg = f'Enter a command (no spaces except after ".roll"): \n\t{commandFormat}'
     await ctx.send(msg)
 
+@client.command()
+async def game(ctx, *args):
+    log.info('Recieved game command.')
+    log.debug('Input arguments: ' + str(args))
+    retMsg = None
+    if(args):
+        if (args[0] == 'new'):
+            if(len(args) == 1):
+                retMsg = 'No game selected. Enter name of game after "new". List of games: \n{}'.format(AvailableGames.getPrettyGameList())
+            else:
+                log.info('Grabbing game.')
+                g = AvailableGames.Games.get(args[1])
+                if(g):
+                    g = g()
+                    retMsg = 'Starting Game: {}\n'.format(g.name)
+                    log.info('Game found.')
+                    log.debug('Game: ' + str(g.name))
+
+                    log.info('Adding instructions and start message to output string.')
+                    global currentGame
+                    currentGame = g
+                    instr = g.instructions()
+                    if(instr):
+                        retMsg += instr + '\n'
+                    try:
+                        g.newGame(ctx)
+                    except Exception as e:
+                        log.error('Encountered an error when attempting to start new game from bot.')
+                        log.debug('New Game Error: ' + str(e))
+                        await ctx.send('Couldn\'t start new game: ' + str(e))
+                        return
+                    startM = g.startMessage()
+                    if(startM):
+                        retMsg += startM + '\n'
+                else:
+                    log.error('Game was not found.')
+                    retMsg = 'Game not found. List of games: \n{}'.format(AvailableGames.getPrettyGameList())
+        elif(currentGame is None):
+            log.error('Unknown arguments given with no game loaded.')
+            retMsg = 'No game has been loaded. Please load a game with "new"'
+        else:
+            log.info('Unknown arguments given, passing args to game.')
+            try:
+                retMsg = currentGame.response(ctx, *args)
+            except Exception as e:
+                retMsg = 'An error occured in the game while handling your input.'
+                log.error('Error occured when game was handling response.')
+                log.debug('Error: ' + str(e))
+    else:
+        log.error('No input argumnets detected.')
+        await ctx.send('.game command needs more input! Use "new" to start a new game. List of games: \n{}'.format(AvailableGames.getPrettyGameList()))
+
+    if(retMsg is not None):
+        log.info('Return message detected, sending response.')
+        await ctx.send(retMsg)
+    else:
+        log.info('Return message was not filled. Forgoing a reply.')
 
 '''
     THE FOLLOWING FUNCTIONS ARE HELPER FUNCTIONS NOT RELATED TO BOT COMMANDS.
 '''
 
-
-
-
-client.run('Njk2ODYzNjY0NjQwMDk4MzY1.Xou65A.JP-g-XjFm8t3IfJaN9blE7D_vMw')
+client.run(mySecrets.discordBotKey)
