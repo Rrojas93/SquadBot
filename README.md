@@ -18,6 +18,7 @@ as well as fun interactions between the bot and the users.
 * **.game**: Can start a game from a list of available games. Just enter the command with no arguments to see a list of games. To start a new game use "new" as the first argument followed by the name of the game as the second argument.
     * Example: ".game new ttt @your_friend" > will result in the start of a new Tic Tac Toe game and challenges a user you mentioned with "@". 
         * Note: the "@your_friend" argument is a game specific argument that is required by the game "Tic Tac Toe"
+* **.roast**: Roast your friends! Generates a random insult from: [rappad.co](https://www.rappad.co/insult-generator). Use a mention (@your_friend) as the first argument of the command to direct an insult to someone specific. If no mention or target is given then the bot will roast you! It has no remorse!
 
 ### Gallery
 
