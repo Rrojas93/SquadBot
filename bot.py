@@ -6,7 +6,9 @@ from discord.ext import commands
 import time, random, re
 import logging as log
 import secrets
+from features import InsultGenerator
 from games import AvailableGames
+
 
 mySecrets = secrets.Secrets()
 
@@ -222,6 +224,22 @@ async def game(ctx, *args):
         await ctx.send(retMsg)
     else:
         log.info('Return message was not filled. Forgoing a reply.')
+
+@client.command()
+async def roast(ctx, target=None):
+    log.info('Recieved roast command. Bless his/her soul.')
+    log.info('Checking for message mentions for the target.')
+    if(len(ctx.message.mentions) > 0):
+        log.info('Mention was found, using the mention as the target for insult.')
+        target = ctx.message.mentions[0]
+    else:
+        log.info('No mentions were found. Checking input arguments.')
+        if(not(target)):
+            log.info('No input arguments found.. Poor soul forgot to give a target for unsult. Lets roast them for it.')
+            target = ctx.author
+
+    insult = InsultGenerator.getInsult()
+    await ctx.send(f'{target.name.upper()}, {insult}')
 
 '''
     THE FOLLOWING FUNCTIONS ARE HELPER FUNCTIONS NOT RELATED TO BOT COMMANDS.
