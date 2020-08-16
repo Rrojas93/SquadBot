@@ -6,7 +6,7 @@ from discord.ext import commands
 import time, random, re
 import logging as log
 import secrets
-from features import InsultGenerator
+from features import MessageGenerator
 from games import AvailableGames
 
 
@@ -237,9 +237,35 @@ async def roast(ctx, target=None):
         if(not(target)):
             log.info('No input arguments found.. Poor soul forgot to give a target for unsult. Lets roast them for it.')
             target = ctx.author
-
-    insult = InsultGenerator.getInsult()
+    try:
+        insult = MessageGenerator.getInsult()
+    except Exception as e:
+        log.error('Error occured when attempting to retrieve insult.')
+        log.debug(e)
+        insult = 'You were just saved from embarrassment and utter destruction.. An error occured and i couldn\'t generate an insult. :/'
     await ctx.send(f'{target.name.upper()}, {insult}')
+
+@client.command()
+async def compliment(ctx, target=None):
+    log.info('Recieved compliment command. We got a nice guy here.')
+    log.info('checking for message mentions for the target.')
+    if(len(ctx.message.mentions) > 0):
+        log.info('Mention was found, using the mention as the target for compliment.')
+        target = ctx.message.mentions[0]
+    else:
+        log.info('No mentions were found. Checking input arguments.')
+        if(not(target)):
+            log.info('No input arguments found.. Poor soul needs a pick me up..')
+            target = ctx.author
+
+    try:
+        compliment = MessageGenerator.getCompliment()
+    except Exception as e:
+        log.error('Error occured when getting compliment.')
+        log.debug(e)
+        compliment = 'I could\'t find you a compliment because there is no compliment that could describe how awesome you are :).. but seriously something went wrong and I couldn\'t generate a compliment. I think my circuits are fried... help.. :\'('
+
+    await ctx.send(f'{target.name}, {compliment}')
 
 '''
     THE FOLLOWING FUNCTIONS ARE HELPER FUNCTIONS NOT RELATED TO BOT COMMANDS.
